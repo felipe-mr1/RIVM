@@ -4,7 +4,10 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
-from .models import UserProfile
+from .models import UserProfile, Game, Bet, Transaction
+from .serializers import UserProfileSerializer, GameSerializer, BetSerializer, TransactionSerializer
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -26,3 +29,18 @@ class RegisterView(APIView):
             "user": {"id": user.id, "username": user.username, "email": user.email},
             "token": str(refresh.access_token)
         })
+    
+class GameViewSet(viewsets.ModelViewSet):
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
+    permission_classes = [IsAuthenticated]  # Requires authentication
+
+class BetViewSet(viewsets.ModelViewSet):
+    queryset = Bet.objects.all()
+    serializer_class = BetSerializer
+    permission_classes = [IsAuthenticated]
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
